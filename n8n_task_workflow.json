@@ -1,0 +1,147 @@
+{
+  "name": "TaskPulse AI - Autonomous Task & Reminder Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "taskpulse-voice-task",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook: Inbound Voice Task",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [180, 240]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o-mini",
+        "messages": {
+          "values": [
+            {
+              "role": "system",
+              "content": "You are TaskPulse AI extraction engine. Extract JSON: { assigned_to, task_title, deadline_date, deadline_time, priority, reminder } from the voice transcript in English, Urdu or Roman Urdu."
+            },
+            {
+              "role": "user",
+              "content": "={{ $json.body.rawTranscript }}"
+            }
+          ]
+        }
+      },
+      "id": "ai-extraction",
+      "name": "AI Task Extraction (NLP)",
+      "type": "n8n-nodes-base.openAi",
+      "typeVersion": 1,
+      "position": [400, 240]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ Boolean($json.task_title && $json.assigned_to) }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "validate-task",
+      "name": "Validate Required Fields",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [620, 240]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO public.tasks (title, assigned_to, priority, deadline, status) VALUES ($1, $2, $3, $4, 'pending') RETURNING id, title;"
+      },
+      "id": "save-supabase",
+      "name": "Save to Supabase DB",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2,
+      "position": [840, 160]
+    },
+    {
+      "parameters": {
+        "channel": "={{ $json.body.channel || 'telegram' }}",
+        "text": "=🔔 Task Scheduled: {{ $json.title }} for {{ $json.assigned_to }}. Due at {{ $json.deadline }}."
+      },
+      "id": "send-dispatch",
+      "name": "Send Multi-Channel Notification",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1060, 160]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"status\": \"success\",\n  \"message\": \"Task created and reminders scheduled via n8n automation\",\n  \"task\": {{ JSON.stringify($json) }}\n}"
+      },
+      "id": "respond-webhook",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1280, 160]
+    }
+  ],
+  "connections": {
+    "Webhook: Inbound Voice Task": {
+      "main": [
+        [
+          {
+            "node": "AI Task Extraction (NLP)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Task Extraction (NLP)": {
+      "main": [
+        [
+          {
+            "node": "Validate Task",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Task": {
+      "main": [
+        [
+          {
+            "node": "Save to Supabase DB",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save to Supabase DB": {
+      "main": [
+        [
+          {
+            "node": "Send Multi-Channel Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Multi-Channel Notification": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

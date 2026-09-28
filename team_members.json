@@ -1,0 +1,34 @@
+[
+  {
+    "id": "mem-abdurraheem",
+    "name": "AbdurRaheem",
+    "email": "abdurraheem@team.io",
+    "role": "Team Member",
+    "avatarColor": "#8b5cf6",
+    "status": "active"
+  },
+  {
+    "id": "mem-basit-amin-bhatti",
+    "name": "Basit Amin Bhatti",
+    "email": "basit.amin@team.io",
+    "role": "Team Member",
+    "avatarColor": "#06b6d4",
+    "status": "active"
+  },
+  {
+    "id": "mem-bilal-hanif",
+    "name": "Bilal Hanif",
+    "email": "bilal.hanif@team.io",
+    "role": "Team Member",
+    "avatarColor": "#10b981",
+    "status": "active"
+  },
+  {
+    "id": "mem-adnan-choudry",
+    "name": "Adnan Choudry",
+    "email": "adnan.choudry@team.io",
+    "role": "Team Member",
+    "avatarColor": "#f59e0b",
+    "status": "active"
+  }
+]
