@@ -1,5 +1,10 @@
 # ⚡ TaskPulse AI — Intelligent Team Task & Deadline Manager
 
+[![Official Live Demo](https://img.shields.io/badge/Live%20Demo-Official%20Site-10b981?style=for-the-badge&logo=github)](https://abdurraheem467.github.io/taskplus-ai/)
+[![GitHub Repo](https://img.shields.io/badge/GitHub-Repository-blue?style=for-the-badge&logo=github)](https://github.com/AbdurRaheem467/taskplus-ai)
+
+> 🚀 **Official Live Application URL:** [https://abdurraheem467.github.io/taskplus-ai/](https://abdurraheem467.github.io/taskplus-ai/)
+
 A modern, professional SaaS web application designed for engineering managers, product leads, and operations directors to delegate tasks, track deadlines in real-time, and configure automated reminders using **natural voice commands in English, Urdu, and Roman Urdu**.
 
 ---
